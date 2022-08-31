@@ -1,18 +1,25 @@
 
 
-resource local_file config {
-  content  = local.config_json
-  filename = "${path.module}/lambda/config.json"
+data "local_file" "index" {
+  filename = "${path.module}/lambda/index.js"
 }
 
-data archive_file lambdazip {
-  depends_on  = [local_file.config]
+data "archive_file" "lambdazip" {
   type        = "zip"
   output_path = "${path.module}/lambda_function.zip"
-  source_dir  = "${path.module}/lambda"
+
+  source {
+    content  = data.local_file.index.content
+    filename = "index.js"
+  }
+
+  source {
+    content  = local.config_json
+    filename = "config.json"
+  }
 }
 
-resource aws_lambda_function lambda {
+resource "aws_lambda_function" "lambda" {
   function_name = local.lambda_name
   role          = aws_iam_role.lambda.arn
   publish       = true

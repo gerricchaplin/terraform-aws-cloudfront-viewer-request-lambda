@@ -1,5 +1,5 @@
 
-module cloudfront_index_rewrite {
+module "cloudfront_index_rewrite" {
   source = "daringway/cloudfront-viewer-request-lambda/aws"
   tags   = {}
 }
